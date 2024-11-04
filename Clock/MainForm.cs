@@ -20,6 +20,7 @@ namespace Clock
         ColorDialog backgroundColorDialog;
         ColorDialog foregroundColorDialog;
         ChooseFont chooseFontDialog;
+        AlarmList alarmList;
        string FontFile { get; set; }
         
         public MainForm()
@@ -34,6 +35,7 @@ namespace Clock
 
             chooseFontDialog = new ChooseFont();
             LoadSettings();
+            alarmList = new AlarmList();
            // backgroundColorDialog.Color =Color.Black;
             //foregroundColorDialog.Color =Color.Blue;
             
@@ -223,6 +225,11 @@ namespace Clock
             if (loadOnWindowsStartupToolStripMenuItem.Checked) rk.SetValue("Clock",Application.ExecutablePath);
             else rk.DeleteValue("Clock", false);// не бросать исключение, если указанная запись отсутствует
             rk.Dispose();// освобождает ресурсы, занятые объектом
+        }
+
+        private void alarmsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            alarmList.ShowDialog(this);
         }
 
 
