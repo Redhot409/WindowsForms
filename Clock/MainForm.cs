@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
 
 namespace Clock
 {
@@ -14,20 +16,37 @@ namespace Clock
     {
         ColorDialog backgroundColorDialog;
         ColorDialog foregroundColorDialog;
+        ChooseFont chooseFontDialog;
+        
         public MainForm()
         {
             InitializeComponent();
+            SetFontDirectory();
             this.TransparencyKey = Color.Empty;
             backgroundColorDialog = new ColorDialog();
             foregroundColorDialog = new ColorDialog();
+            backgroundColorDialog.Color =Color.Black;
+            foregroundColorDialog.Color =Color.Blue;
+            chooseFontDialog=new ChooseFont();
+            labelTime.ForeColor =foregroundColorDialog.Color;
             SetVisibility(false);
             this.Location = new Point
                 (
                     System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - this.Width,
                     //System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - this.Height
-                    0
+                    20
                 );
             this.Text += $"Location:{this.Location.X}x{this.Location.Y}";
+                       
+        }
+        void SetFontDirectory()
+        {
+            string location = Assembly.GetEntryAssembly().Location;// получаем полный адрес исполняемого файла
+            string path = Path.GetDirectoryName(location);          // из адреса извлекаем путь к файлу
+            //MessageBox.Show(path);
+            Directory.SetCurrentDirectory($"{path}\\..\\..\\Fonts");// переходим в каталог со шрифтами
+            //MessageBox.Show(Directory.GetCurrentDirectory());
+        
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -137,6 +156,14 @@ namespace Clock
             if (backgroundColorDialog.ShowDialog(this) == DialogResult.OK)
             {
                 labelTime.BackColor = backgroundColorDialog.Color;
+            }
+        }
+
+        private void fontsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (chooseFontDialog.ShowDialog(this) == DialogResult.OK)
+            { 
+                labelTime.Font=chooseFontDialog.ChosenFont;
             }
         }
 
