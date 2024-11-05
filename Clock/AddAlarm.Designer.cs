@@ -30,12 +30,13 @@
         {
             this.dateTimePickerTime = new System.Windows.Forms.DateTimePicker();
             this.checkedListBoxWeek = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelFilename = new System.Windows.Forms.Label();
             this.buttonChooseFile = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.dateTimePickerDate = new System.Windows.Forms.DateTimePicker();
             this.checkBoxExactDate = new System.Windows.Forms.CheckBox();
+            this.openFileDialogSound = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // dateTimePickerTime
@@ -43,8 +44,9 @@
             this.dateTimePickerTime.CalendarFont = new System.Drawing.Font("Mistral", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.dateTimePickerTime.Font = new System.Drawing.Font("Mistral", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.dateTimePickerTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePickerTime.Location = new System.Drawing.Point(214, 36);
+            this.dateTimePickerTime.Location = new System.Drawing.Point(1, 36);
             this.dateTimePickerTime.Name = "dateTimePickerTime";
+            this.dateTimePickerTime.ShowUpDown = true;
             this.dateTimePickerTime.Size = new System.Drawing.Size(129, 46);
             this.dateTimePickerTime.TabIndex = 0;
             // 
@@ -69,17 +71,17 @@
             this.checkedListBoxWeek.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.checkedListBoxWeek.Size = new System.Drawing.Size(342, 24);
             this.checkedListBoxWeek.TabIndex = 1;
-            this.checkedListBoxWeek.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxWeek_SelectedIndexChanged);
             // 
-            // label1
+            // labelFilename
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(-3, 125);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 20);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
+            this.labelFilename.AutoSize = true;
+            this.labelFilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelFilename.Location = new System.Drawing.Point(-3, 125);
+            this.labelFilename.Name = "labelFilename";
+            this.labelFilename.Size = new System.Drawing.Size(66, 16);
+            this.labelFilename.TabIndex = 2;
+            this.labelFilename.Text = "Filename:";
+            this.labelFilename.TextChanged += new System.EventHandler(this.labelFilename_TextChanged);
             // 
             // buttonChooseFile
             // 
@@ -90,10 +92,12 @@
             this.buttonChooseFile.TabIndex = 3;
             this.buttonChooseFile.Text = "Выбрать файл";
             this.buttonChooseFile.UseVisualStyleBackColor = true;
+            this.buttonChooseFile.Click += new System.EventHandler(this.buttonChooseFile_Click);
             // 
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonOK.Enabled = false;
             this.buttonOK.Location = new System.Drawing.Point(214, 177);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
@@ -113,9 +117,10 @@
             // 
             // dateTimePickerDate
             // 
+            this.dateTimePickerDate.Enabled = false;
             this.dateTimePickerDate.Font = new System.Drawing.Font("Mistral", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.dateTimePickerDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePickerDate.Location = new System.Drawing.Point(1, 36);
+            this.dateTimePickerDate.Location = new System.Drawing.Point(136, 36);
             this.dateTimePickerDate.Name = "dateTimePickerDate";
             this.dateTimePickerDate.Size = new System.Drawing.Size(200, 46);
             this.dateTimePickerDate.TabIndex = 6;
@@ -130,6 +135,11 @@
             this.checkBoxExactDate.TabIndex = 7;
             this.checkBoxExactDate.Text = "На конкретную дату";
             this.checkBoxExactDate.UseVisualStyleBackColor = true;
+            this.checkBoxExactDate.CheckedChanged += new System.EventHandler(this.checkBoxExactDate_CheckedChanged);
+            // 
+            // openFileDialogSound
+            // 
+            this.openFileDialogSound.FileName = "openFileDialogSound";
             // 
             // AddAlarm
             // 
@@ -141,7 +151,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonChooseFile);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelFilename);
             this.Controls.Add(this.checkedListBoxWeek);
             this.Controls.Add(this.dateTimePickerTime);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -158,11 +168,12 @@
 
         private System.Windows.Forms.DateTimePicker dateTimePickerTime;
         private System.Windows.Forms.CheckedListBox checkedListBoxWeek;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelFilename;
         private System.Windows.Forms.Button buttonChooseFile;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.DateTimePicker dateTimePickerDate;
         private System.Windows.Forms.CheckBox checkBoxExactDate;
+        private System.Windows.Forms.OpenFileDialog openFileDialogSound;
     }
 }
