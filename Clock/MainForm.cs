@@ -22,50 +22,45 @@ namespace Clock
         ChooseFont chooseFontDialog;
         AlarmList alarmList;
         Alarm alarm;
-       string FontFile { get; set; }
-        
+        string FontFile { get; set; }
         public MainForm()
         {
             InitializeComponent();
-            AllocConsole(); 
-            SetFontDirectory();            
+            AllocConsole();
+            SetFontDirectory();
             this.TransparencyKey = Color.Empty;
             backgroundColorDialog = new ColorDialog();
-            foregroundColorDialog = new ColorDialog();         
+            foregroundColorDialog = new ColorDialog();
 
             chooseFontDialog = new ChooseFont();
             LoadSettings();
             alarmList = new AlarmList();
-            
-           // backgroundColorDialog.Color =Color.Black;
-            //foregroundColorDialog.Color =Color.Blue;
-            
+
+            //backgroundColorDialog.Color = Color.Black;
+            //foregroundColorDialog.Color = Color.Blue;
             SetVisibility(false);
             this.Location = new Point
                 (
                     System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width - this.Width,
-                    //System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - this.Height
-                    20
+                    50
                 );
-            this.Text += $"Location:{this.Location.X}x{this.Location.Y}";
+            this.Text += $" Location: {this.Location.X}x{this.Location.Y}";
 
-            alarm = new Alarm();  
+            alarm = new Alarm();
             GetNextAlarm();
         }
         void SetFontDirectory()
         {
-            string location = Assembly.GetEntryAssembly().Location;// получаем полный адрес исполняемого файла
-            string path = Path.GetDirectoryName(location);          // из адреса извлекаем путь к файлу
-            //MessageBox.Show(path);
-            Directory.SetCurrentDirectory($"{path}\\..\\..\\Fonts");// переходим в каталог со шрифтами
-            //MessageBox.Show(Directory.GetCurrentDirectory());
-        
+            string location = Assembly.GetEntryAssembly().Location; //Получаем полный адрес исполняемого файла
+            string path = Path.GetDirectoryName(location);          //Из адреса извлекаем путь к файлу
+                                                                    //MessageBox.Show(path);
+            Directory.SetCurrentDirectory($"{path}\\..\\..\\Fonts");//Переходим в каталог со шрифтами
+                                                                    //MessageBox.Show(Directory.GetCurrentDirectory());
         }
-
         void LoadSettings()
         {
-            StreamReader sr=new StreamReader("settings.txt");
-            List<string>settings=new List<string>();
+            StreamReader sr = new StreamReader("settings.txt");
+            List<string> settings = new List<string>();
             while (!sr.EndOfStream)
             {
                 settings.Add(sr.ReadLine());
@@ -81,107 +76,91 @@ namespace Clock
             labelTime.BackColor = backgroundColorDialog.Color;
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            object run=rk.GetValue("Clock");
+            object run = rk.GetValue("Clock318");
             if (run != null) loadOnWindowsStartupToolStripMenuItem.Checked = true;
             rk.Dispose();
         }
-
         void SaveSettings()
         {
             StreamWriter sw = new StreamWriter("settings.txt");
-            sw.WriteLine(backgroundColorDialog.Color.ToArgb());//ToArgb() возвращает числовой код цвета
+            sw.WriteLine(backgroundColorDialog.Color.ToArgb()); //ToArgb() врзвращает числовой код цвета
             sw.WriteLine(foregroundColorDialog.Color.ToArgb());
             sw.WriteLine(chooseFontDialog.FontFile.Split('\\').Last());
             sw.WriteLine(topmostToolStripMenuItem.Checked);
             sw.WriteLine(showDateToolStripMenuItem.Checked);
             sw.Close();
-            Process.Start("notepad","settings.txt");
+            Process.Start("notepad", "settings.txt");
         }
         void GetNextAlarm()
         {
-            //if (alarmList.ListBoxAlarms !=null)
-                
-                    List<Alarm> alarms = new List <Alarm>();
-                    foreach (Alarm item in alarmList.ListBoxAlarms.Items)
-                     {
-                        if(item.Time>DateTime.Now)
-                        alarms.Add(item);  
-                     }
-                   if( alarms.Min()!=null)
-                alarm=alarms.Min();
-                Console.WriteLine(alarm);
-                
+            List<Alarm> alarms = new List<Alarm>();
+            foreach (Alarm item in alarmList.ListBoxAlarms.Items)
+            {
+                if (item.Time > DateTime.Now)
+                    alarms.Add(item);
+            }
+            if (alarms.Min() != null)
+                alarm = alarms.Min();
+            //List<TimeSpan> intervals = new List<TimeSpan>();
+            //foreach (Alarm item in alarmList.ListBoxAlarms.Items)
+            //{
+            //	TimeSpan min = new TimeSpan(24,0,0);
+            //	if (DateTime.Now - item.Time < min) alarm = item;
+            //}
+            Console.WriteLine(alarm);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             labelTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
             if (cbShowDate.Checked)
-            { 
-                labelTime.Text +=$"\n{DateTime.Today.ToString("yyyy.MM.dd")}";
+            {
+                labelTime.Text += $"\n{DateTime.Today.ToString("yyyy.MM.dd")}";
             }
             if (showWeekdayToolStripMenuItem.Checked)
             {
                 labelTime.Text += $"\n{DateTime.Now.DayOfWeek}";
-            //notifyIconSystemTray.Text = "Current time " + labelTime.Text;
-
-            if (DateTime.Now.Hour == alarm.Time.Hour &&
+            }
+            //notifyIconSystemTray.Text = "Curret time " + labelTime.Text;
+            //int weekday = (int)DateTime.Now.DayOfWeek;
+            //weekday = weekday == 0 ? 7 : weekday - 1;
+            if (
+                alarm.Weekdays[((int)DateTime.Now.DayOfWeek == 0 ? 6 : (int)DateTime.Now.DayOfWeek - 1)] == true &&
+                DateTime.Now.Hour == alarm.Time.Hour &&
                 DateTime.Now.Minute == alarm.Time.Minute &&
-                DateTime.Now.Second == alarm.Time.Second)
+                DateTime.Now.Second == alarm.Time.Second
+                )
             {
                 MessageBox.Show(alarm.Filename, "Alarm", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Console.WriteLine("Alarm:----" + alarm.ToString());
+                Console.WriteLine("ALARM:----" + alarm.ToString());
             }
             GetNextAlarm();
         }
-
         private void SetVisibility(bool visible)
         {
-            this.TransparencyKey = visible ? Color.Empty:this.BackColor;
-            this.FormBorderStyle =visible ? FormBorderStyle.Sizable : FormBorderStyle.None;
+            this.TransparencyKey = visible ? Color.Empty : this.BackColor;
+            this.FormBorderStyle = visible ? FormBorderStyle.Sizable : FormBorderStyle.None;
             this.ShowInTaskbar = visible;
-            btnHideControls.Visible = visible;
-            labelTime.BackColor = visible ?Color.Empty :backgroundColorDialog.Color;
             cbShowDate.Visible = visible;
+            btnHideControls.Visible = visible;
+            labelTime.BackColor = visible ? Color.Empty : backgroundColorDialog.Color;
         }
         private void btnHideControls_Click(object sender, EventArgs e)
         {
-            showControlsToolStripMenuItem.Checked = false;
-            //this.TransparencyKey = this.BackColor;
-            //this.FormBorderStyle = FormBorderStyle.None;
-            //this.ShowInTaskbar = false;
-            //btnHideControls.Visible = false;
-            //labelTime.BackColor = Color.Coral;
-            //cbShowDate.Visible = false;
             //SetVisibility(false);
-            notifyIconSystemTray.ShowBalloonTip(3, "Важная информация", "Для того, чтобы вернуть как было, нужно ткнуть 2 раза мышей по часам или по этой иконке ",ToolTipIcon.Info);
+            showControlsToolStripMenuItem.Checked = false;
+            notifyIconSystemTray.ShowBalloonTip(3, "Alerts!", "Для того чтобы вернуть как было, нужно ткнуть 2 раза мышей по часам, или по этой иконке", ToolTipIcon.Info);
         }
 
         private void labelTime_DoubleClick(object sender, EventArgs e)
         {
-            //this.TransparencyKey = Color.Empty;
-            //this.FormBorderStyle = FormBorderStyle.Sizable;
-            //this.ShowInTaskbar = true;
-            //btnHideControls.Visible = true;
-            //labelTime.BackColor = Color.Empty;
-            //cbShowDate.Visible = true;
             //SetVisibility(true);
             showControlsToolStripMenuItem.Checked = true;
         }
 
         private void notifyIconSystemTray_MouseMove(object sender, MouseEventArgs e)
         {
-            notifyIconSystemTray.Text = "Current time:\n " + labelTime.Text;
-        }
-
-        private void showControlsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void topmostToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
+            notifyIconSystemTray.Text = "Curret time:\n" + labelTime.Text;
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -194,7 +173,6 @@ namespace Clock
             this.TopMost = topmostToolStripMenuItem.Checked;
         }
 
-        
         private void showControlsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibility(((ToolStripMenuItem)sender).Checked);
@@ -238,8 +216,8 @@ namespace Clock
         private void fontsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (chooseFontDialog.ShowDialog(this) == DialogResult.OK)
-            { 
-                labelTime.Font=chooseFontDialog.ChosenFont;
+            {
+                labelTime.Font = chooseFontDialog.ChosenFont;
             }
         }
 
@@ -250,24 +228,20 @@ namespace Clock
 
         private void loadOnWindowsStartupToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
-            RegistryKey rk = 
-                Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",true);
-            if (loadOnWindowsStartupToolStripMenuItem.Checked) rk.SetValue("Clock",Application.ExecutablePath);
-            else rk.DeleteValue("Clock", false);// не бросать исключение, если указанная запись отсутствует
-            rk.Dispose();// освобождает ресурсы, занятые объектом
+            RegistryKey rk =
+                Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);  //true - Writable
+            if (loadOnWindowsStartupToolStripMenuItem.Checked)
+                rk.SetValue("Clock318", Application.ExecutablePath);
+            else rk.DeleteValue("Clock318", false);//false - НЕ бросать исключение, если указанная запись отсутсвует.
+            rk.Dispose();   //Освобождает ресурсы, занятые объектом.
         }
 
         private void alarmsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             alarmList.ShowDialog(this);
+            GetNextAlarm();
         }
         [DllImport("kernel32.dll")]
         static extern bool AllocConsole();
-
-
-        //private void notifyIconSystemTray_BalloonTipShown(object sender, EventArgs e)
-        //{
-        //    notifyIconSystemTray.Text="Current time" + labelTime.Text;
-        //}
     }
 }
