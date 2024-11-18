@@ -21,6 +21,7 @@ namespace Clock
         ColorDialog foregroundColorDialog;
         ChooseFont chooseFontDialog;
         AlarmList alarmList;
+        Alarm alarm;
        string FontFile { get; set; }
         
         public MainForm()
@@ -30,13 +31,12 @@ namespace Clock
             SetFontDirectory();            
             this.TransparencyKey = Color.Empty;
             backgroundColorDialog = new ColorDialog();
-            foregroundColorDialog = new ColorDialog();
-           
-            
+            foregroundColorDialog = new ColorDialog();         
 
             chooseFontDialog = new ChooseFont();
             LoadSettings();
             alarmList = new AlarmList();
+            
            // backgroundColorDialog.Color =Color.Black;
             //foregroundColorDialog.Color =Color.Blue;
             
@@ -48,7 +48,9 @@ namespace Clock
                     20
                 );
             this.Text += $"Location:{this.Location.X}x{this.Location.Y}";
-                       
+
+            alarm = new Alarm();  
+            GetNextAlarm();
         }
         void SetFontDirectory()
         {
@@ -95,15 +97,42 @@ namespace Clock
             sw.Close();
             Process.Start("notepad","settings.txt");
         }
+        void GetNextAlarm()
+        {
+            //if (alarmList.ListBoxAlarms !=null)
+                
+                    List<Alarm> alarms = new List <Alarm>();
+                    foreach (Alarm item in alarmList.ListBoxAlarms.Items)
+                     {
+                        if(item.Time>DateTime.Now)
+                        alarms.Add(item);  
+                     }
+                   if( alarms.Min()!=null)
+                alarm=alarms.Min();
+                Console.WriteLine(alarm);
+                
+        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            labelTime.Text = DateTime.Now.ToString("HH:mm:ss tt");
+            labelTime.Text = DateTime.Now.ToString("hh:mm:ss tt");
             if (cbShowDate.Checked)
             { 
-                labelTime.Text+=$"\n{DateTime.Today.ToString("yyyy.MM.dd")}";
+                labelTime.Text +=$"\n{DateTime.Today.ToString("yyyy.MM.dd")}";
             }
+            if (showWeekdayToolStripMenuItem.Checked)
+            {
+                labelTime.Text += $"\n{DateTime.Now.DayOfWeek}";
             //notifyIconSystemTray.Text = "Current time " + labelTime.Text;
+
+            if (DateTime.Now.Hour == alarm.Time.Hour &&
+                DateTime.Now.Minute == alarm.Time.Minute &&
+                DateTime.Now.Second == alarm.Time.Second)
+            {
+                MessageBox.Show(alarm.Filename, "Alarm", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Console.WriteLine("Alarm:----" + alarm.ToString());
+            }
+            GetNextAlarm();
         }
 
         private void SetVisibility(bool visible)

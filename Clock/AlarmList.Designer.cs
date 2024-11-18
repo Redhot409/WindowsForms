@@ -41,6 +41,7 @@
             this.listBoxAlarms.Name = "listBoxAlarms";
             this.listBoxAlarms.Size = new System.Drawing.Size(237, 134);
             this.listBoxAlarms.TabIndex = 0;
+            this.listBoxAlarms.DoubleClick += new System.EventHandler(this.listBoxAlarms_DoubleClick);
             // 
             // buttonAddAlarm
             // 

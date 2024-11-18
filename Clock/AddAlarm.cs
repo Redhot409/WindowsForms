@@ -20,13 +20,33 @@ namespace Clock
             Alarm = new Alarm();
             labelFilename.MaximumSize=new Size(this.Width-50,25);
             openFileDialogSound.Filter = "MP-3 (*.mp3) |*.mp3| Flac (*.flac)|*.flac|All Audio|*.mp3;*.flac";
+            openFileDialogSound.FilterIndex = 3;
+        }
+        public AddAlarm(Alarm alarm) : this()
+        {
+            Alarm = alarm;  
+            //InitWindowFromAlarm();
+        }
+
+        void InitWindowFromAlarm()
+        {
+            if(Alarm.Date !=DateTime.MinValue)this.dateTimePickerDate.Value =Alarm.Date;
+            
+            this.dateTimePickerDate.Value = Alarm.Time;
+            this.labelFilename.Text = Alarm.Filename;
+            for (int i = 0; i < Alarm.Weekdays.Length; i++)
+            {
+                checkedListBoxWeek.SetItemChecked(i, Alarm.Weekdays[i]);
+               // Console.WriteLine(checkedListBoxWeek.CheckedItems[i] .GetType());
+            }
+        
         }
         void InitAlarm()
         {
             Alarm.Date = dateTimePickerDate.Enabled ? dateTimePickerDate.Value : DateTime.MinValue;
             Alarm.Time = dateTimePickerDate.Value;
-           
             Alarm.Filename=labelFilename.Text;
+            for (int i = 0; i < Alarm.Weekdays.Length; i++) Alarm.Weekdays[i] = false;
             for (int i = 0; i < checkedListBoxWeek.CheckedIndices.Count; i++)
             {
                 //Свойство CheckedIndices -это коллекция, кот содержит индексы выбранных галочек в checkedListBox
